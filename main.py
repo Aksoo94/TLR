@@ -23,6 +23,7 @@ class Game:
             'player/walk/rightup': Animation(load_sprite_sheet('player/Walk/walk_Right_Up.png'), img_dur=6),
             'player/walk/rightdown': Animation(load_sprite_sheet('player/Walk/walk_Right_Down.png'), img_dur=6),
             'player/walk/up': Animation(load_sprite_sheet('player/Walk/walk_Up.png'), img_dur=6),
+            'map': load_image('Tilemaps/Beginning Fields.png', 2)
         }
 
         self.player = Player(self, (400,300), (10,20))
@@ -31,15 +32,25 @@ class Game:
 
     def update(self):
         while self.running:
-            self.screen.fill((50,50,50))
 
             self.scroll[0] += (self.player.rect().centerx - self.screen.get_width()/2 - self.scroll[0])
+            if self.scroll[0] < 0:
+                self.scroll[0] = 0
+            elif self.scroll[0] > self.assets['map'].get_width() - self.screen.get_width():
+                self.scroll[0] = self.assets['map'].get_width() - self.screen.get_width()
             self.scroll[1] += (self.player.rect().centery - self.screen.get_height()/2 - self.scroll[1])
-            #render_scroll = (int(self.scroll[0]), int(self.scroll[1])) # uncomment this if you want to center the player
-            render_scroll = (0,0) # comment this out if you want to center the player
+            if self.scroll[1] < 0:
+                self.scroll[1] = 0
+            elif self.scroll[1] > self.assets['map'].get_height() - self.screen.get_height():
+                self.scroll[1] = self.assets['map'].get_height() - self.screen.get_height()
+            render_scroll = (int(self.scroll[0]), int(self.scroll[1])) # uncomment this if you want to center the player
+            #render_scroll = (0,0) # comment this out if you want to center the player
+
+            self.screen.blit(self.assets['map'], (0,0), (render_scroll[0], render_scroll[1], self.screen.get_width(), self.screen.get_height()))
 
             self.player.update((self.movement[1] - self.movement[0], self.movement[3] - self.movement[2]))
             self.player.render(self.screen, render_scroll)
+
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -65,6 +76,7 @@ class Game:
                     if event.key == pygame.K_s:
                         self.movement[3] = False
             
+
             pygame.display.flip()
             self.clock.tick(60)
 
