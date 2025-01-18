@@ -3,12 +3,13 @@ import os
 
 BASE_IMG_PATH = "assets/"
 
-def load_image(path):
+def load_image(path, scale=1):
     img = pygame.image.load(BASE_IMG_PATH + path).convert_alpha()
+    img = pygame.transform.scale_by(img, scale)
     return img
 
 def load_sprite_sheet(img_path, size=(48,64), scale=1):
-    img = load_image(img_path)
+    img = load_image(img_path, scale)
     sheet = []
     for x in range(img.get_width() // size[0]):
         sheet.append(pygame.transform.scale(img.subsurface((x*size[0], 0, size[0], size[1])), (size[0]*scale, size[1]*scale)))
